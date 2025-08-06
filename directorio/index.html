@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio Corporativo Bonsana</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Colores principales de Bonsana */
+            --bonsana-primary: #e30613;
+            /* Rojo principal */
+            --bonsana-secondary: #ffffff;
+            /* Blanco */
+            --bonsana-dark: #333333;
+            /* Gris oscuro */
+            --bonsana-light: #f5f5f5;
+            /* Gris muy claro */
+            --bonsana-gray: #f8f9fa;
+            /* Gris claro para fondos */
+        }
+
+        body {
+            background-color: var(--bonsana-secondary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            color: var(--bonsana-dark);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--bonsana-primary), #b30000);
+            border-radius: 2px;
+        }
+
+        .directorio-card {
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background-color: white;
+        }
+
+        .directorio-header {
+            background: linear-gradient(135deg, var(--bonsana-primary) 0%, #b30000 100%);
+            color: white;
+            padding: 18px 20px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .directorio-header:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            z-index: 1;
+        }
+
+        .directorio-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .directorio-body {
+            padding: 0;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--bonsana-light);
+            border-bottom: 2px solid var(--bonsana-primary);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: var(--bonsana-light);
+        }
+
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(227, 6, 19, 0.05);
+        }
+
+        .email-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .email-cell a {
+            color: var(--bonsana-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .email-cell a:hover {
+            color: #b30000;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 992px) {
+            .table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box .form-control {
+            padding-left: 50px;
+            height: 50px;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+        }
+
+        .search-box .form-control:focus {
+            box-shadow: 0 3px 10px rgba(227, 6, 19, 0.1);
+            border-color: var(--bonsana-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--bonsana-primary);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h2 class="section-title">Directorio Corporativo</h2>
+
+        <div class="search-section">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="form-control" id="searchDirectory"
+                            placeholder="Buscar por área, correo o nombre...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="directorio-card">
+            <div class="directorio-header">
+                <h3><i class="fas fa-address-book me-2"></i> Listado de Contactos</h3>
+            </div>
+            <div class="directorio-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="directoryTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">Área</th>
+                                <th scope="col">Nombre del Líder</th>
+                                <th scope="col">Correo Electrónico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>Coordinadora administrativa</td>
+                                <td>Carolina nieto osorio</td>
+                                <td class="email-cell"><a
+                                        href="mailto:coordinacionadministrativa@bonsanaips.com">coordinacionadministrativa@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar administrativo - auditoria de proveedores</td>
+                                <td>Laura isabel uribe mora</td>
+                                <td class="email-cell"><a
+                                        href="mailto:auditoriaproveedores.bonsana@gmail.com">auditoriaproveedores.bonsana@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar contable</td>
+                                <td>Lina fernanda sinisterra solis</td>
+                                <td class="email-cell"><a
+                                        href="mailto:febonsanaips@gmail.com">febonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar contable</td>
+                                <td>Diana Mayerly Cubillos Briñez</td>
+                                <td class="email-cell"><a
+                                        href="mailto:costos.bonsanaips@gmail.com">costos.bonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinadora de calidad</td>
+                                <td>Lady Diana Marin</td>
+                                <td class="email-cell"><a href="mailto:calidad@bonsanaips.com">calidad@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo - Call Center</td>
+                                <td>Yulieth Montoya - Michael Cardona</td>
+                                <td class="email-cell"><a
+                                        href="mailto:consultaexternabonsanaips@gmail.com">consultaexternabonsanaips@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Contadora</td>
+                                <td>Luz angela rivera salazar</td>
+                                <td class="email-cell"><a
+                                        href="mailto:contabilidad@bonsanaips.com">contabilidad@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Asesora sst</td>
+                                <td>Meisy Ramirez</td>
+                                <td class="email-cell"><a href="mailto:sgsstbonsana@bonsanaips.com">sgsstbonsana@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo - Talento Humano</td>
+                                <td>Daniela Gonzalez Escobar</td>
+                                <td class="email-cell"><a
+                                        href="mailto:gestionhumana@bonsanaips.com">gestionhumana@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Enfermera jefe</td>
+                                <td>Isabella Mejia Arce</td>
+                                <td class="email-cell"><a
+                                        href="mailto:coordinacionserviciosambulatorios@bonsanaips.com">coordinacionserviciosambulatorios@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Enfermera jefe</td>
+                                <td>Beatriz molina - Sandra lamos</td>
+                                <td class="email-cell"><a
+                                        href="mailto:urgenciasbonsanaips@gmail.com">urgenciasbonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Enfermera jefe</td>
+                                <td>Beatriz molina - Sandra lamos</td>
+                                <td class="email-cell"><a
+                                        href="mailto:hospitalizacion@bonsanaips.com">hospitalizacion@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar de Laboratorio - Bacteriologo</td>
+                                <td>Sandra correa - Gerardo Sarmiento</td>
+                                <td class="email-cell"><a
+                                        href="mailto:laboratoriobonsanaips@gmail.com">laboratoriobonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Enfermera jefe</td>
+                                <td>Anyi Soto</td>
+                                <td class="email-cell"><a
+                                        href="mailto:liderdecirugiabonsana@gmail.com">liderdecirugiabonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar de Enfermeria Administrativo</td>
+                                <td>Claudia Molina </td>
+                                <td class="email-cell"><a
+                                        href="mailto:cirugiabonsanaips@gmail.com">cirugiabonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliares de Enfermeria - Cirugia</td>
+                                <td>nan</td>
+                                <td class="email-cell"><a
+                                        href="mailto:recuperacionbonsanaips@gmail.com">recuperacionbonsanaips@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Enfermera jefe - programa seguridad del paciente</td>
+                                <td>Yeny Martinez</td>
+                                <td class="email-cell"><a
+                                        href="mailto:programaseguridadbonsana@gmail.com">programaseguridadbonsana@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Imagenologia</td>
+                                <td>Yohan Sebastian Garavito</td>
+                                <td class="email-cell"><a
+                                        href="mailto:imagenologiabonsana@gmail.com">imagenologiabonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo</td>
+                                <td>Diana Patricia Bejarano</td>
+                                <td class="email-cell"><a
+                                        href="mailto:referenciaipsbonsana@gmail.com">referenciaipsbonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliares Administrativos admisiones</td>
+                                <td>nan</td>
+                                <td class="email-cell"><a
+                                        href="mailto:consultaexterna@bonsanaips.com">consultaexterna@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Facturación</td>
+                                <td>Luis Fernando Urrego Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:facturacion_cirugia@bonsanaips.com">facturacion_cirugia@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Cartera y glosas</td>
+                                <td>Juan Miguel Castaño</td>
+                                <td class="email-cell"><a
+                                        href="mailto:cartera.bonsana@gmail.com">cartera.bonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo</td>
+                                <td>Yina Paola Velasco</td>
+                                <td class="email-cell"><a
+                                        href="mailto:consultaexternabonsanaips@gmail.com">consultaexternabonsanaips@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Ingeniero de Procesos</td>
+                                <td>Julian Adolfo Ramirez</td>
+                                <td class="email-cell"><a
+                                        href="mailto:recursosfisicosbonsanaips@gmail.com">recursosfisicosbonsanaips@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Farmacia</td>
+                                <td>Wilder Hincapie </td>
+                                <td class="email-cell"><a href="mailto:farmacia@bonsanaips.com">farmacia@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Farmacia</td>
+                                <td>Wilder Hincapie </td>
+                                <td class="email-cell"><a href="mailto:regente4828@gmail.com">regente4828@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar de Estadistica</td>
+                                <td>Valentina Gonzalez Jimenez</td>
+                                <td class="email-cell"><a
+                                        href="mailto:estadística@bonsanaips.com">estadística@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo</td>
+                                <td>Diana Patricia Bejarano</td>
+                                <td class="email-cell"><a
+                                        href="mailto:bonsanareferenycontrareferen@gmail.com">bonsanareferenycontrareferen@gmail.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Médica</td>
+                                <td>David Silva Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:coordinacionmedica@bonsanaips.com">coordinacionmedica@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Comercial</td>
+                                <td>Alba Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:comercial@bonsanaips.com">comercial@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Sistemas</td>
+                                <td>Jorge Aurelio Betancourt</td>
+                                <td class="email-cell"><a
+                                        href="mailto:bonsana.sistemas@gmail.com">bonsana.sistemas@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Sistemas</td>
+                                <td>Jorge Aurelio Betancourt</td>
+                                <td class="email-cell"><a
+                                        href="mailto:administrador@bonsanaips.com">administrador@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Médica</td>
+                                <td>David Silva Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:gestionjuridica@bonsanaips.com">gestionjuridica@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Gerente</td>
+                                <td>Julian Jose correa castellanos</td>
+                                <td class="email-cell"><a
+                                        href="mailto:juliancorrea@bonsanaips.com">juliancorrea@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Directora General</td>
+                                <td>Tatiana Maldonado Tobon</td>
+                                <td class="email-cell"><a
+                                        href="mailto:direccionadministrativa@bonsanaips.com">direccionadministrativa@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Comercial</td>
+                                <td>Alba Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:comercial.bonsanaips@gmail.com">comercial.bonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Contadora</td>
+                                <td>Luz angela rivera salazar</td>
+                                <td class="email-cell"><a
+                                        href="mailto:auxcontablebonsanaips@gmail.com">auxcontablebonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinadora de calidad</td>
+                                <td>Lady Diana Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:calidadipsbonsana@gmail.com">calidadipsbonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Cartera y glosas</td>
+                                <td>Juan Miguel Castaño</td>
+                                <td class="email-cell"><a
+                                        href="mailto:cocola.bonsana@gmail.com">cocola.bonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de compras</td>
+                                <td>Jhon Mario Garcia Clavijo</td>
+                                <td class="email-cell"><a
+                                        href="mailto:comprasbonsanaips@gmail.com">comprasbonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Comercial</td>
+                                <td>Alba Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:mercadeobonsana@gmail.com">mercadeobonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Comercial</td>
+                                <td>Alba Marin</td>
+                                <td class="email-cell"><a
+                                        href="mailto:marketingbonsana@gmail.com">marketingbonsana@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Cartera y glosas</td>
+                                <td>Juan Miguel Castaño</td>
+                                <td class="email-cell"><a
+                                        href="mailto:glosas.bonsanaips@gmail.com">glosas.bonsanaips@gmail.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Fisioterapeuta</td>
+                                <td>Paula Palau</td>
+                                <td class="email-cell"><a
+                                        href="mailto:fisioterapia@bonsanaips.com">fisioterapia@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo</td>
+                                <td>Diana Patricia Bejarano</td>
+                                <td class="email-cell"><a
+                                        href="mailto:referencia@bonsanaips.com">referencia@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar de Archivo</td>
+                                <td>Maria Leidy Saavedra</td>
+                                <td class="email-cell"><a href="mailto:archivo@bonsanaips.com">archivo@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar de Laboratorio - Bacteriologo</td>
+                                <td>Sandra correa - Gerardo Sarmiento</td>
+                                <td class="email-cell"><a href="mailto:laboratorio@bonsanaips.com">laboratorio@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Lider de Sistemas</td>
+                                <td>Jorge Aurelio Betancourt</td>
+                                <td class="email-cell"><a href="mailto:sistemas@bonsanaips.com">sistemas@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar contable</td>
+                                <td>Adalbeto Bravo Florez</td>
+                                <td class="email-cell"><a
+                                        href="mailto:auxcontable3@bonsanaips.com">auxcontable3@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Coordinación Enfermeria</td>
+                                <td>Lina Marcela Coy Bolivar</td>
+                                <td class="email-cell"><a
+                                        href="mailto:coordinacionenfermeria@bonsanaips.com">coordinacionenfermeria@bonsanaips.com</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Auxiliar Administrativo</td>
+                                <td>Santiago Hurtado</td>
+                                <td class="email-cell"><a href="mailto:auxsistemas@bonsanaips.com">auxsistemas@bonsanaips.com</a></td>
+                            </tr>
+
+                            <tr>
+                                <td>Urgencias</td>
+                                <td>Medicos</td>
+                                <td class="email-cell"><a href="mailto:Medicos@bonsanaips.com">Medicos@bonsanaips.com</a></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchDirectory');
+            const table = document.getElementById('directoryTable');
+            const rows = table.getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function () {
+                const searchText = searchInput.value.toLowerCase();
+
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    const area = row.cells[0].textContent.toLowerCase();
+                    const lider = row.cells[1].textContent.toLowerCase();
+                    const email = row.cells[2].textContent.toLowerCase();
+
+                    if (area.includes(searchText) || lider.includes(searchText) || email.includes(searchText)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
